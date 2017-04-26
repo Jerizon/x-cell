@@ -30,12 +30,17 @@ describe('dom-util', () => {
                 const el = createTH();
                 expect(el.tagName).toBe('TH');
             })
+            it('sets the text of the TH', () => {
+            	const text = 'Oh thist\'s just greate! Well, game over, man!';
+            	const el = createTH(text);
+            	expect(el.textContent).toEqual(text);
+            })
         });
         describe('createTD', () => {
             it('produces valid TD element', () => {
                 const el = createTD();
                 expect(el.tagName).toBe('TD');
-            })
+            });
         });
         describe('createTR', () => {
             it('produces valid TR element', () => {
