@@ -1,6 +1,6 @@
-const http = requrie('http');
+const http = require('http');
 const express = require('express');
-const app = require('express');
+const app = express();
 
 app.use(express.static('public'));
 app.set('port', process.env.PORT || 3000);
