@@ -6,7 +6,7 @@ class TableModel {
 	}
 
 	_getCellId(location) {
-		return `${location.col}:{location.row}`;
+		return `${location.col}:${location.row}`;
 	}
 	getValue(location) {
 		return this.data[this._getCellId(location)];

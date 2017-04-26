@@ -6,22 +6,21 @@ class TableView {
         this.model = model;
     }
 
-
     init() {
-    	this.initDomReferences();
+        this.initDomReferences();
         this.initCurrentCell();
-    	this.renderTable();
+        this.renderTable();
         this.attachEventHandlers();
     }
 
     initDomReferences() {
-    	this.headerRowEl = document.querySelector('THEAD TR');
+        this.headerRowEl = document.querySelector('THEAD TR');
         this.sheetBodyEl = document.querySelector('TBODY');
         this.formulaBarEl = document.querySelector('#formula-bar')
     }
 
     initCurrentCell() {
-        this.currentCellLocation = { col: 0, row: 0};
+        this.currentCellLocation = { col: 0, row: 0 };
         this.renderFormulaBar();
     }
 
@@ -35,26 +34,26 @@ class TableView {
         this.formulaBarEl.focus();
     }
     renderTable() {
-    	this.renderTableHeader();
+        this.renderTableHeader();
         this.renderTableBody();
     }
     renderTableHeader() {
-    	removeChildren(this.headerRowEl);
-    	getLetterRange('A', this.model.numCols)
-    		.map(colLabel => createTH(colLabel))
-    		.forEach(th => this.headerRowEl.appendChild(th));
+        removeChildren(this.headerRowEl);
+        getLetterRange('A', this.model.numCols)
+            .map(colLabel => createTH(colLabel))
+            .forEach(th => this.headerRowEl.appendChild(th));
     }
 
     isCurrentCell(col, row) {
-        return this.currentCellLocation.row === row &&
-               this.currentCellLocation.col === col;
+        return this.currentCellLocation.col === col &&
+            this.currentCellLocation.row === row;
     }
     renderTableBody() {
         const fragment = document.createDocumentFragment();
-        for(let row = 0; row < this.model.numRows; row++) {
+        for (let row = 0; row < this.model.numRows; row++) {
             const tr = createTR();
-            for(let col = 0; col < this.model.numCols; col++) {
-                const position = { col: col, row: row}
+            for (let col = 0; col < this.model.numCols; col++) {
+                const position = { col: col, row: row }
                 const value = this.model.getValue(position);
                 const td = createTD(value);
 
@@ -71,21 +70,21 @@ class TableView {
     }
     attachEventHandlers() {
         this.sheetBodyEl.addEventListener('click', this.handleSheetClick.bind(this));
-
+        this.formulaBarEl.addEventListener('keyup', this.handleFormulaBarChange.bind(this));
     }
 
-    isColumnHeaderRow(row) {
-        return row < 1;
+    handleFormulaBarChange(evt) {
+        const value = this.formulaBarEl.value;
+        this.model.setValue(this.currentCellLocation, value);
+        this.renderTableBody();
     }
 
     handleSheetClick(evt) {
         const col = evt.target.cellIndex;
-        const row = evt.target.parentElement.rowIndex-1;
+        const row = evt.target.parentElement.rowIndex - 1;
 
-        if(!this.isColumnHeaderRow(row)) {
-            this.currentCellLocation = { col: col, row: row};
-            this.renderTableBody();
-        }
+        this.currentCellLocation = { col: col, row: row };
+        this.renderTableBody();
         this.renderFormulaBar();
     }
 

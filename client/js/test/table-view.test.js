@@ -1,95 +1,168 @@
-const fs = require('fs');
-const TableModel = require('../table-model');
-const TableView = require('../table-view');
+const { getLetterRange } = require('./array-util');
+const { removeChildren, createTR, createTH, createTD } = require('./dom-util');
 
-describe('table-view', () => {
-    beforeEach(() => {
-        //load HTML skeleton from disk and parse into DOM
-        const fixturePath = './client/js/test/fixtures/sheet-container.html';
-        const html = fs.readFileSync(fixturePath, 'utf8');
-        document.documentElement.innerHTML = html;
-    })
+class TableView {
+    constructor(model) {
+        this.model = model;
+    }
 
-    describe('formula bar', () => {
-        it('updates FROM the value of the current cell', () => {
-            //set up the inital state
-            const model = new TableModel(3, 3);
-            const view = new TableView(model);
-            model.setValue({col: 2, row: 1}, '123');
-            view.init();
+    init() {
+        this.initDomReferences();
+        this.initCurrentCell();
+        this.renderTable();
+        this.attachEventHandlers();
+    }
 
-            //inspect the inital state
-            const formulaBarEl = document.querySelector('#formula-bar');
-            expect(formulaBarEl.value).toBe('');
+    initDomReferences() {
+        this.headerRowEl = document.querySelector('THEAD TR');
+        this.sheetBodyEl = document.querySelector('TBODY');
+        this.formulaBarEl = document.querySelector('#formula-bar');
+        this.sumBar = document.querySelector('#sum-bar');
+        this.columnButton = document.querySelector('#addColumn');
+        this.rowButton = document.querySelector('#addRow');
 
-            //simulate user action
-            const trs = document.querySelectorAll('TBODY TR');
-            trs[1].cells[2].click();
+    }
 
-            //inspect the resulting state
-            expect(formulaBarEl.value).toBe('123');
-        })
-    })
+    initCurrentCell() {
+        this.currentCellLocation = { col: 0, row: 0};
+        this.renderFormulaBar();
+    }
 
-    describe('table body', () => {
-        it('highlights the current cell when clicked', () => {
-            // set up the intial state
-            const model = new TableModel(10, 5);
-            const view = new TableView(model);
-            view.init();
+    renderTable() {
+        this.renderTableHeader();
+        this.renderTableBody();
+        this.renderSumBar();
+    }
+    renderTableHeader() {
+        removeChildren(this.headerRowEl);
+        // test if it changes
+        getLetterRange('A', this.model.numCols)
+            .map(colLabel => createTH(colLabel))
+            .forEach(th => this.headerRowEl.appendChild(th));
+        // get letters and build elements
+    }
 
-            // inspect the inital state
-            let trs = document.querySelectorAll('TBODY TR');
-            let td = trs[2].cells[3];
-            expect(td.className).toBe('');
+    renderSumBar() {
+        removeChildren(this.sumBar);
+        const sumData = new Array(this.model.numCols);
+        for(let col = 0; col < this.model.numCols; col ++) {
+            sumData[col] = 0;
+            for (let row = 0; row < this.model.numRows; row ++){
+                const position = {col: col, row: row};
+                const value = parseInt(this.model.getValue(position))
+                if((typeof value === 'number')  && !isNaN(value)){
+                    sumData[col] = sumData[col] + value;
+                }
+            }
+        }   
+        sumData.map(colSum => createTH(colSum)).forEach(cs => this.sumBar.appendChild(cs));
+    }
 
-            //simulate user action
-            td.click();
+    isCurrentCell(col, row) {
+      return this.currentCellLocation.col === col &&
+             this.currentCellLocation.row === row &&
+             this.model.highlight.cell === true;
+    }
+    isCurrentCol(col) {
+        return this.currentCellLocation.col === col && 
+        this.model.highlight.col === true;
+    }
 
-            //inpsect the resulting state
-            trs = document.querySelectorAll('TBODY TR');
-            td = trs[2].cells[3];
-            expect(td.className).not.toBe('');
-        })
-        it('has the size', () => {
-            // set up the inital state
-            const numCols = 6;
-            const numRows = 10;
-            const model = new TableModel(numCols, numRows);
-            const view = new TableView(model);
-            view.init();
+    normalizeValueForRenduring(value) {
+        return value || '';
+    }
 
-            // inspect the inital state
-            let ths = document.querySelectorAll('THEAD TH');
-            expect(ths.length).toBe(numCols);
-        });
-        it('fills in values from the model', () => {
-        	//set up the inital state
-        	const model = new TableModel(3, 3);
-        	const view = new TableView(model);
-        	model.setValue({col: 2, row: 1}, '123');
-        	view.init();
-        	//inspect the inital state
-        	const trs = document.querySelectorAll('TBODY TR');
-        	expect(trs[1].cells[2].textContent).toBe('123');
-        });
-    });
+    renderFormulaBar () {
+        const currentCellValue = this.model.getValue(this.currentCellLocation);
+        this.formulaBarEl.value = this.normalizeValueForRenduring(currentCellValue);
+        this.formulaBarEl.focus();
+    }
 
-    describe('table header', () => {
-        it('has valid column header lables', () => {
-            //set up the initial state 
-            const numCols = 6;
-            const numRows = 10;
-            const model = new TableModel(numCols, numRows);
-            const view = new TableView(model);
-            view.init();
+    renderTableBody() {
+        const fragment = document.createDocumentFragment();
+        for(let row = 0; row < this.model.numRows; row ++) {
+            const tr = createTR();
+            for (let col = 0; col < this.model.numCols; col ++){
+                const position = {col: col, row: row};
+                const value = this.model.getValue(position);
+                const td = createTD(value);
+                
+                if(this.isCurrentCell(col, row)) {
+                    td.className = 'current-cell';
+                } else if (this.isCurrentCol(col)){
+                    td.className = 'current-column';
+                };
+                tr.appendChild(td);
+            }
+            fragment.appendChild(tr);
+        }
+        removeChildren(this.sheetBodyEl);
+        this.sheetBodyEl.appendChild(fragment);
+    }
+    attachEventHandlers () {
+        
+        this.headerRowEl.addEventListener('click', this.handleColumnClick.bind(this));
+        this.sheetBodyEl.addEventListener('click', this.handleSheetClick.bind(this));
+        this.formulaBarEl.addEventListener('keyup', this.handleFormulaBarChange.bind(this));
+        this.columnButton.addEventListener('click', this.addColumn.bind(this));
+        this.rowButton.addEventListener('click', this.addRow.bind(this));
+    }
 
-            //inspect the inital state
-            let ths = document.querySelectorAll('THEAD TH');
-            expect(ths.length).toBe(numCols);
+    addColumn () {
+        if(this.model.highlight.col !== true) {
+            this.model.numCols += 1;
+            
+        } else {
+            this.model.highlight.addCol = true;
+        }
+      this.renderTable();
+    }
+    addInteriorColumn () {
 
-            let labelTexts = Array.from(ths).map(el => el.textContent);
-            expect(labelTexts).toEqual(['A', 'B', 'C', 'D', 'E', 'F']);
-        });
-    });
-});
+
+    }
+
+    addRow() {
+        console.log(this.model.numRows);
+        this.model.numRows += 1;
+        this.renderTable();
+    }
+
+    handleFormulaBarChange(evt) {
+        const value = this.formulaBarEl.value;
+        this.model.setValue(this.currentCellLocation, value);
+        this.renderTableBody();
+        this.renderSumBar();
+    }
+    handleColumnClick(evt) {
+        this.model.highlight = {
+            col : true,
+            cell: false,
+            row: false,
+            addCol: false
+        };
+        
+        const col = evt.target.cellIndex;
+        this.currentCellLocation = { col:col, row: 0};
+        this.renderTableBody();
+    }
+
+    handleSheetClick(evt) {
+        this.model.highlight = {
+            col : false,
+            cell: true,
+            row: false,
+            addCol: false
+        };
+        const col = evt.target.cellIndex;
+        const row = evt.target.parentElement.rowIndex -1;
+
+            this.currentCellLocation = { col:col, row: row};
+            this.renderTableBody();
+        
+
+        this.renderFormulaBar();
+    }
+}
+
+module.exports = TableView;
