@@ -97,7 +97,6 @@ class TableView {
         this.rowButton.addEventListener('click', this.addRow.bind(this));
     }
     addColumn() {
-        console.log(this.model.numCols);
         this.model.numCols += 1;
         this.renderTable();
     }

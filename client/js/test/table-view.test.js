@@ -9,7 +9,7 @@ describe('table-view', () => {
         const html = fs.readFileSync(fixturePath, 'utf8');
         document.documentElement.innerHTML = html;
     });
-    
+
     describe('sum column row', () => {
         it('sums columns and displays culmulative totals', () => {
             //set up the inital state
@@ -73,10 +73,30 @@ describe('table-view', () => {
 
             //inspect the resulting state
             expect(formulaBarEl.value).toBe('123');
-        })
-    })
+        });
+    });
 
+    describe('add column', () => {
+        it('adds a column when addColumn button is clicked', () => {
+            // set up inital state
+            const numCols = 6;
+            const numRows = 10;
+            const model = new TableModel(numCols, numRows);
+            const view = new TableView(model);
+            view.init();
+            // inspect the inital state
+            let ths = document.querySelectorAll('THEAD TH');
+            expect(ths.length).toBe(numCols);
+            // simulted user action
+            view.columnButton.click();
+            // inspect the resulting state
+            ths = document.querySelectorAll('THEAD TH');
+            expect(ths.length).toBe(numCols + 1);
+        });
+    });
+    
     describe('table body', () => {
+        
         it('highlights the current cell when clicked', () => {
             // set up the intial state
             const model = new TableModel(10, 5);
