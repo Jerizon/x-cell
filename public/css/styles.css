@@ -18,6 +18,10 @@ td {
     background-color: lightgreen;
 }
 
+.current-row {
+    background-color: thistle;
+}
+
 #sum-bar {
     background-color: lightblue;
 }

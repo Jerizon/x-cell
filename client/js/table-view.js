@@ -75,11 +75,16 @@ class TableView {
             this.model.highlight.col === true;
     }
 
+    isCurrentRow(row) {
+        return this.currentCellLocation.row === row &&
+            this.model.highlight.row === true;
+    }
+
     renderTableBody() {
         const fragment = document.createDocumentFragment();
         for (let row = 0; row < this.model.numRows; row++) {
             const th = createTH(row + 1);
-            th.setAttribute('class','headerColumn');
+            th.setAttribute('class', 'headerColumn');
             const tr = createTR();
             tr.appendChild(th);
             for (let col = 0; col < this.model.numCols; col++) {
@@ -91,10 +96,12 @@ class TableView {
                     td.className = 'current-cell';
                 } else if (this.isCurrentCol(col + 1)) {
                     td.className = 'current-column';
+                } else if (this.isCurrentRow(row)) {
+                    td.className = 'current-row';
                 }
 
                 tr.appendChild(td)
-                
+
             }
             fragment.appendChild(tr);
         }
@@ -145,7 +152,13 @@ class TableView {
         };
         const col = evt.target.cellIndex - 1;
         const row = evt.target.parentElement.rowIndex - 1;
-
+        if (col < 0) {
+            this.model.highlight = {
+                col: false,
+                cell: false,
+                row: true
+            };
+        }
         this.currentCellLocation = { col: col, row: row };
         this.renderTableBody();
         this.renderFormulaBar();
