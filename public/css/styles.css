@@ -13,3 +13,7 @@ td {
 .current-cell {
 	background-color: pink;
 }
+
+#sum-bar {
+	background-color: lightblue;
+}

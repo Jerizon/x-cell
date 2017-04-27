@@ -16,7 +16,8 @@ class TableView {
     initDomReferences() {
         this.headerRowEl = document.querySelector('THEAD TR');
         this.sheetBodyEl = document.querySelector('TBODY');
-        this.formulaBarEl = document.querySelector('#formula-bar')
+        this.formulaBarEl = document.querySelector('#formula-bar');
+        this.sumBar = document.querySelector('#sum-bar');
     }
 
     initCurrentCell() {
@@ -36,6 +37,7 @@ class TableView {
     renderTable() {
         this.renderTableHeader();
         this.renderTableBody();
+        this.renderSumBar();
     }
     renderTableHeader() {
         removeChildren(this.headerRowEl);
@@ -44,10 +46,27 @@ class TableView {
             .forEach(th => this.headerRowEl.appendChild(th));
     }
 
+    renderSumBar() {
+        removeChildren(this.sumBar);
+        const sumData = new Array(this.model.numCols);
+        for(let col = 0; col < this.model.numCols; col ++) {
+            sumData[col] = 0;
+            for (let row = 0; row < this.model.numRows; row ++){
+                const position = {col: col, row: row};
+                const value = parseInt(this.model.getValue(position))
+                if((typeof value === 'number')  && !isNaN(value)){
+                    sumData[col] = sumData[col] + value;
+                }
+            }
+        }   
+        sumData.map(colSum => createTH(colSum)).forEach(cs => this.sumBar.appendChild(cs));
+    }
+
     isCurrentCell(col, row) {
         return this.currentCellLocation.col === col &&
             this.currentCellLocation.row === row;
     }
+
     renderTableBody() {
         const fragment = document.createDocumentFragment();
         for (let row = 0; row < this.model.numRows; row++) {
@@ -68,6 +87,7 @@ class TableView {
         removeChildren(this.sheetBodyEl);
         this.sheetBodyEl.appendChild(fragment);
     }
+
     attachEventHandlers() {
         this.sheetBodyEl.addEventListener('click', this.handleSheetClick.bind(this));
         this.formulaBarEl.addEventListener('keyup', this.handleFormulaBarChange.bind(this));
@@ -77,6 +97,7 @@ class TableView {
         const value = this.formulaBarEl.value;
         this.model.setValue(this.currentCellLocation, value);
         this.renderTableBody();
+        this.renderSumBar();
     }
 
     handleSheetClick(evt) {
