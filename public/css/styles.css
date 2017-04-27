@@ -11,9 +11,15 @@ td {
 }
 
 .current-cell {
-	background-color: pink;
+    background-color: pink;
 }
 
 #sum-bar {
-	background-color: lightblue;
+    background-color: lightblue;
+}
+
+button {
+    font-size: 24px;
+    margin-top: 50px;
+    text-align: center;
 }
