@@ -10,6 +10,31 @@ describe('table-view', () => {
         document.documentElement.innerHTML = html;
     });
 
+    describe('highlighting entire columns and rows', () => {
+        it('highlights an entire column when column header is clicked', () => {
+            
+            // set up the intial state
+            const model = new TableModel(10, 5);
+            const view = new TableView(model);
+            view.init();
+
+            // inspect the inital state
+            let trs = document.querySelectorAll('TBODY TR');
+            let td = trs[2].cells[3];
+            expect(td.className).toBe('');
+
+            // simultate user action
+            let ths = document.querySelectorAll('THEAD TH');
+            let th = ths[3];
+            th.click();
+
+            //inspect the resulting state
+            trs = document.querySelectorAll('TBODY TR');
+            td = trs[2].cells[3];
+            expect(td.className).not.toBe('');
+        })
+    });
+
     describe('sum column row', () => {
         it('sums columns and displays culmulative totals', () => {
             //set up the inital state
