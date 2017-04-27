@@ -47,7 +47,6 @@ class TableView {
     }
 
     renderSumBar() {
-        removeChildren(this.sumBar);
         const sumData = new Array(this.model.numCols);
         for(let col = 0; col < this.model.numCols; col ++) {
             sumData[col] = 0;
@@ -58,8 +57,9 @@ class TableView {
                     sumData[col] = sumData[col] + value;
                 }
             }
-        }   
-        sumData.map(colSum => createTH(colSum)).forEach(cs => this.sumBar.appendChild(cs));
+        }  
+        removeChildren(this.sumBar);
+        sumData.map(colSum => createTD(colSum)).forEach(cs => this.sumBar.appendChild(cs));
     }
 
     isCurrentCell(col, row) {

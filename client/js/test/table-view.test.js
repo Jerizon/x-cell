@@ -8,7 +8,32 @@ describe('table-view', () => {
         const fixturePath = './client/js/test/fixtures/sheet-container.html';
         const html = fs.readFileSync(fixturePath, 'utf8');
         document.documentElement.innerHTML = html;
-    })
+    });
+    
+    describe('sum column row', () => {
+        it('sums columns and displays culmulative totals', () => {
+            //set up the inital state
+            const model = new TableModel(3, 3);
+            const view = new TableView(model)
+            model.setValue({col: 2, row: 1}, '1');
+            model.setValue({col: 2, row: 2}, '2');
+            view.init();
+
+            //inspect the inital state
+            let trs = document.querySelectorAll('TBODY TR');
+            let td = trs[1].cells[2];
+            let td2 = trs[2].cells[2];
+            expect(td.textContent).toBe('1');
+            expect(td2.textContent).toBe('2');
+            
+            //simulate user action
+            view.renderSumBar();
+
+            //
+            let tsc = document.querySelectorAll('#sum-bar > TD');
+            expect(tsc[2].textContent).toBe('3');
+        });
+    });
 
     describe('formula bar', () => {
         it('makes changes TO the value of the current cell', () => {
@@ -71,7 +96,7 @@ describe('table-view', () => {
             td = trs[2].cells[3];
             expect(td.className).not.toBe('');
         })
-        it('has the size', () => {
+        it('has the predetermined size', () => {
             // set up the inital state
             const numCols = 6;
             const numRows = 10;
