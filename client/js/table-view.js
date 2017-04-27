@@ -50,16 +50,16 @@ class TableView {
 
     renderSumBar() {
         const sumData = new Array(this.model.numCols);
-        for(let col = 0; col < this.model.numCols; col ++) {
+        for (let col = 0; col < this.model.numCols; col++) {
             sumData[col] = 0;
-            for (let row = 0; row < this.model.numRows; row ++){
-                const position = {col: col, row: row};
+            for (let row = 0; row < this.model.numRows; row++) {
+                const position = { col: col, row: row };
                 const value = parseInt(this.model.getValue(position))
-                if((typeof value === 'number')  && !isNaN(value)){
+                if ((typeof value === 'number') && !isNaN(value)) {
                     sumData[col] = sumData[col] + value;
                 }
             }
-        }  
+        }
         removeChildren(this.sumBar);
         sumData.map(colSum => createTD(colSum)).forEach(cs => this.sumBar.appendChild(cs));
     }
@@ -67,6 +67,11 @@ class TableView {
     isCurrentCell(col, row) {
         return this.currentCellLocation.col === col &&
             this.currentCellLocation.row === row;
+    }
+
+    isCurrentCol(col) {
+        return this.currentCellLocation.col === col &&
+            this.model.highlight.col === true;
     }
 
     renderTableBody() {
@@ -80,6 +85,8 @@ class TableView {
 
                 if (this.isCurrentCell(col, row)) {
                     td.className = 'current-cell';
+                } else if (this.isCurrentCol(col)) {
+                    td.className = 'current-column';
                 }
 
                 tr.appendChild(td);
@@ -95,6 +102,7 @@ class TableView {
         this.formulaBarEl.addEventListener('keyup', this.handleFormulaBarChange.bind(this));
         this.columnButton.addEventListener('click', this.addColumn.bind(this));
         this.rowButton.addEventListener('click', this.addRow.bind(this));
+        this.headerRowEl.addEventListener('click', this.handleColumnClick.bind(this));
     }
     addColumn() {
         this.model.numCols += 1;
@@ -112,7 +120,24 @@ class TableView {
         this.renderSumBar();
     }
 
+    handleColumnClick(evt) {
+        this.model.highlight = {
+            col: true,
+            cell: false,
+            row: false
+        };
+
+        const col = evt.target.cellIndex;
+        this.currentCellLocation = { col: col };
+        this.renderTableBody();
+    }
+
     handleSheetClick(evt) {
+        this.model.highlight = {
+            col: false,
+            cell: true,
+            row: false
+        };
         const col = evt.target.cellIndex;
         const row = evt.target.parentElement.rowIndex - 1;
 
