@@ -101,7 +101,6 @@ class TableView {
         this.renderTable();
     }
     addRow() {
-        console.log(this.model.numRows);
         this.model.numRows += 1;
         this.renderTable();
     }

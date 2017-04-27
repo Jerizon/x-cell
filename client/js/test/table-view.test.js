@@ -94,7 +94,25 @@ describe('table-view', () => {
             expect(ths.length).toBe(numCols + 1);
         });
     });
-    
+    describe('add a column', () => {
+        it('adds a row when addRow button is clicked', () => {
+            // set up inital state
+            const numCols = 6;
+            const numRows = 10;
+            const model = new TableModel(numCols, numRows);
+            const view = new TableView(model);
+            view.init();
+
+            // inspect the inital state
+            
+
+            // simulted user action
+            view.rowButton.click();
+
+            // inspect the resulting state
+            expect(model.numRows).toBe(numRows + 1);
+        });
+    });
     describe('table body', () => {
         
         it('highlights the current cell when clicked', () => {
