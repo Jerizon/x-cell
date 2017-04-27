@@ -8,10 +8,10 @@ const getLetterRange = function(firstLetter='A', numLetters) {
 	let extendedLetterRange = [];
 	for(let letter = rangeStart; letter < rangeEnd + 1; letter ++) {
 		const aToZRange = Math.floor((letter-65)/26);
-		if(aToZRange < 1 ){
+		if(aToZRange < 1 ) {
 			extendedLetterRange.push(String.fromCharCode(letter));
 		} else {
-			extendedLetterRange.push(String.fromCharCode(aToZRange + 64) + String.fromCharCode((letter - 65) % 26));
+			extendedLetterRange.push(String.fromCharCode(aToZRange + 64) + String.fromCharCode(((letter - 64) % 26) + 64));
 	}
 		}
 		

@@ -118,6 +118,20 @@ class TableView {
     }
     addColumn() {
         this.model.numCols += 1;
+        if(this.model.highlight.col === true) {
+            const colLocation = this.currentCellLocation.col;
+            for (let row = 0; row < this.model.numRows; row++) {
+               for (let col = this.model.numCols; col > 0 ; col--) {
+                    if(col > colLocation) {
+                        const preValue = this.model.getValue({col: col - 1, row: row});
+                        this.model.setValue({col: col, row: row}, preValue);
+                    }
+                    if(col === colLocation) {
+                        this.model.setValue({col: col, row: row}, 0);
+                    }
+               }
+           }
+        }
         this.renderTable();
     }
     addRow() {
