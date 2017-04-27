@@ -43,6 +43,7 @@ class TableView {
     }
     renderTableHeader() {
         removeChildren(this.headerRowEl);
+        this.headerRowEl.appendChild(createTH(' '))
         getLetterRange('A', this.model.numCols)
             .map(colLabel => createTH(colLabel))
             .forEach(th => this.headerRowEl.appendChild(th));
@@ -50,10 +51,10 @@ class TableView {
 
     renderSumBar() {
         const sumData = new Array(this.model.numCols);
-        for (let col = 0; col < this.model.numCols; col++) {
+        for (let col = 0; col < this.model.numCols + 1; col++) {
             sumData[col] = 0;
             for (let row = 0; row < this.model.numRows; row++) {
-                const position = { col: col, row: row };
+                const position = { col: col - 1, row: row };
                 const value = parseInt(this.model.getValue(position))
                 if ((typeof value === 'number') && !isNaN(value)) {
                     sumData[col] = sumData[col] + value;
@@ -77,7 +78,10 @@ class TableView {
     renderTableBody() {
         const fragment = document.createDocumentFragment();
         for (let row = 0; row < this.model.numRows; row++) {
+            const th = createTH(row + 1);
+            th.setAttribute('class','headerColumn');
             const tr = createTR();
+            tr.appendChild(th);
             for (let col = 0; col < this.model.numCols; col++) {
                 const position = { col: col, row: row }
                 const value = this.model.getValue(position);
@@ -85,11 +89,12 @@ class TableView {
 
                 if (this.isCurrentCell(col, row)) {
                     td.className = 'current-cell';
-                } else if (this.isCurrentCol(col)) {
+                } else if (this.isCurrentCol(col + 1)) {
                     td.className = 'current-column';
                 }
 
-                tr.appendChild(td);
+                tr.appendChild(td)
+                
             }
             fragment.appendChild(tr);
         }
@@ -138,7 +143,7 @@ class TableView {
             cell: true,
             row: false
         };
-        const col = evt.target.cellIndex;
+        const col = evt.target.cellIndex - 1;
         const row = evt.target.parentElement.rowIndex - 1;
 
         this.currentCellLocation = { col: col, row: row };

@@ -5,7 +5,7 @@ table {
 th,
 td {
     border: 1px solid black;
-    min-width: 100px;
+    min-width: 40px;
     height: 25px;
     padding: 3px;
 }
@@ -26,4 +26,8 @@ button {
     font-size: 24px;
     margin-top: 50px;
     text-align: center;
+}
+
+.headerColumn {
+    background-color: papayawhip ;
 }
