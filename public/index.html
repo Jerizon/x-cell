@@ -1,13 +1,14 @@
 <html>
-
 <head>
+    <!-- Links style.css sheet-->
     <link href="css/styles.css" rel="stylesheet">
 </head>
 
 <body>
+<!-- Create Formula Bar and places it at the top of the other elements -->
     <input id="formula-bar" type="text" value "" />
     <div class="container">
-        
+        <!-- Creates sheet current and container, which will hold our data table-->
         <table id="sheet-current">
             <thead>
                 <tr></tr>
@@ -15,11 +16,14 @@
             <tbody>
 
             </tbody>
+            <!-- Creates a divider for our sumn column row-->
             <div class='sumContainer'>
             <tr id='sum-bar'> </tr>
             </div>
         </table>
+        <!-- Adds the addColumn button -->
         <button id="addColumn" type="button">Add Column</button>
+        <!-- Adds the addRow button -->
     <button id="addRow" type="button">Add Row</button>
     </div>
     <script src="js/bundle.js"></script>

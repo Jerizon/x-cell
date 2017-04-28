@@ -141,7 +141,6 @@ describe('table-view', () => {
             
 
             // simulted user action
-            
             view.columnButton.click();
            
             // inspect the resulting state

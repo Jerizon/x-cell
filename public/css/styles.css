@@ -1,7 +1,8 @@
+/* Aligns the table so there is no space between cells */
 table {
     border-collapse: collapse;
 }
-
+/* Creates border and defines the cells height & width */
 th,
 td {
     border: 1px solid black;
@@ -9,29 +10,30 @@ td {
     height: 25px;
     padding: 3px;
 }
-
-.current-cell {
-    background-color: pink;
-}
-
-.current-column {
-    background-color: lightgreen;
-}
-
-.current-row {
-    background-color: thistle;
-}
-
-#sum-bar {
-    background-color: lightblue;
-}
-
+/*  Defines style for Add Row and Add Column buttons*/
 button {
     font-size: 24px;
     margin-top: 50px;
     text-align: center;
 }
+/* Class for highlighting current cell  */
+.current-cell {
+    background-color: pink;
+}
+/*  Class for highlighting current column*/
+.current-column {
+    background-color: lightgreen;
+}
+/* Class for highlighting current row */
+.current-row {
+    background-color: thistle;
+}
+/*  Class for highlighting the Column Sum Bar*/
+#sum-bar {
+    background-color: lightblue;
+}
 
+/*  An class I made as an excuse to use the color papayawhip. Who named this?*/
 .headerColumn {
     background-color: papayawhip ;
 }

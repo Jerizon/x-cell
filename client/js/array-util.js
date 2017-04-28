@@ -1,7 +1,11 @@
+//Returns array from fromNum to toNum that is sequential in order, both increasing and decreasing
 const getRange = function(fromNum, toNum) {
 	return Array.from({length: toNum - fromNum +1},
 		(unused, i) => i + fromNum);
 };
+
+//Needlessly complicated function that will return the an array of letters that go from
+// A to Z, then AA to AZ, then BA to BZ... to ZZ
 const getLetterRange = function(firstLetter='A', numLetters) {
 	const rangeStart = firstLetter.charCodeAt(0);
 	const rangeEnd = rangeStart + numLetters-1;

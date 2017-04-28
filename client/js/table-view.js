@@ -5,7 +5,7 @@ class TableView {
     constructor(model) {
         this.model = model;
     }
-
+    // Initalizes refences, location, table, and events
     init() {
         this.initDomReferences();
         this.initCurrentCell();
@@ -13,6 +13,7 @@ class TableView {
         this.attachEventHandlers();
     }
 
+    //initalizes references for later use 
     initDomReferences() {
         this.headerRowEl = document.querySelector('THEAD TR');
         this.sheetBodyEl = document.querySelector('TBODY');
@@ -22,25 +23,31 @@ class TableView {
         this.rowButton = document.querySelector('#addRow');
     }
 
+    // defines location at program start
     initCurrentCell() {
         this.currentCellLocation = { col: 0, row: 0 };
         this.renderFormulaBar();
     }
 
+    // prevents undefined from appearing in formula bar
     normalizeValueForRendering(value) {
         return value || '';
     }
 
+    // Renders the formula bar from cell location and value
     renderFormulaBar() {
         const currentCellValue = this.model.getValue(this.currentCellLocation);
         this.formulaBarEl.value = this.normalizeValueForRendering(currentCellValue);
         this.formulaBarEl.focus();
     }
+    //Calls to renders sections of the table
     renderTable() {
         this.renderTableHeader();
         this.renderTableBody();
         this.renderSumBar();
     }
+
+    // Renders A, B, C, ... through ZZ for table header.
     renderTableHeader() {
         removeChildren(this.headerRowEl);
         this.headerRowEl.appendChild(createTH(' '))
@@ -49,6 +56,7 @@ class TableView {
             .forEach(th => this.headerRowEl.appendChild(th));
     }
 
+    // Renders the sum of all the columns
     renderSumBar() {
         const sumData = new Array(this.model.numCols);
         for (let col = 0; col < this.model.numCols + 1; col++) {
@@ -65,21 +73,25 @@ class TableView {
         sumData.map(colSum => createTD(colSum)).forEach(cs => this.sumBar.appendChild(cs));
     }
 
+    // returns if the given location (in col, row) matches actual location  
     isCurrentCell(col, row) {
         return this.currentCellLocation.col === col &&
             this.currentCellLocation.row === row;
     }
 
+    // returns if the given column location (in col) matches actual column location
     isCurrentCol(col) {
         return this.currentCellLocation.col === col &&
             this.model.highlight.col === true;
     }
 
+    // returns if the given row location (in row) matches actual row location
     isCurrentRow(row) {
         return this.currentCellLocation.row === row &&
             this.model.highlight.row === true;
     }
 
+    //renders table body, updates class of table cells created, and creates the first table row
     renderTableBody() {
         const fragment = document.createDocumentFragment();
         for (let row = 0; row < this.model.numRows; row++) {
@@ -109,6 +121,7 @@ class TableView {
         this.sheetBodyEl.appendChild(fragment);
     }
 
+    //Attaches event handlers to the specified DOM elements
     attachEventHandlers() {
         this.sheetBodyEl.addEventListener('click', this.handleSheetClick.bind(this));
         this.formulaBarEl.addEventListener('keyup', this.handleFormulaBarChange.bind(this));
@@ -116,6 +129,8 @@ class TableView {
         this.rowButton.addEventListener('click', this.addRow.bind(this));
         this.headerRowEl.addEventListener('click', this.handleColumnClick.bind(this));
     }
+
+    //Adds column when called. Called by click columnButton.
     addColumn() {
         this.model.numCols += 1;
         if(this.model.highlight.col === true) {
@@ -135,6 +150,7 @@ class TableView {
         this.renderTable();
     }
 
+    //Adds row when called. Called by clicking rowButton.
     addRow() {
         this.model.numRows += 1;
         if(this.model.highlight.row === true) {
@@ -154,6 +170,7 @@ class TableView {
         this.renderTable();
     }
 
+    //Changes value when key is pressed and formulaBar is focused
     handleFormulaBarChange(evt) {
         const value = this.formulaBarEl.value;
         this.model.setValue(this.currentCellLocation, value);
@@ -161,6 +178,8 @@ class TableView {
         this.renderSumBar();
     }
 
+    // Changes highlight property of model to Col when a Column Header is clicked
+    // Updates column location
     handleColumnClick(evt) {
         this.model.highlight = {
             col: true,
@@ -173,6 +192,8 @@ class TableView {
         this.renderTableBody();
     }
 
+    // Changes highlight property of model to either cell or row based on location clicked
+    // Updates location
     handleSheetClick(evt) {
         this.model.highlight = {
             col: false,
