@@ -120,7 +120,7 @@ class TableView {
         this.model.numCols += 1;
         if(this.model.highlight.col === true) {
             const colLocation = this.currentCellLocation.col;
-            for (let row = 0; row < this.model.numRows; row++) {
+            for (let row = 0; row < this.model.numRows; row ++) {
                for (let col = this.model.numCols; col > 0 ; col--) {
                     if(col > colLocation) {
                         const preValue = this.model.getValue({col: col - 1, row: row});
@@ -134,8 +134,23 @@ class TableView {
         }
         this.renderTable();
     }
+
     addRow() {
         this.model.numRows += 1;
+        if(this.model.highlight.row === true) {
+            const rowLocation = this.currentCellLocation.row;
+            for (let col = 0; col < this.model.numCols; col++) {
+               for (let row = this.model.numRows; row > 0 ; row--) {
+                    if(row > rowLocation) {
+                        const preValue = this.model.getValue({col: col, row: row - 1 });
+                        this.model.setValue({col: col, row: row}, preValue);
+                    }
+                    if(row === rowLocation) {
+                        this.model.setValue({col: col, row: row}, 0);
+                    }
+               }
+           }
+        }
         this.renderTable();
     }
 

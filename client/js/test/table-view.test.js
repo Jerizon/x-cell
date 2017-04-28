@@ -79,14 +79,13 @@ describe('table-view', () => {
             //simulate user action
             view.renderSumBar();
 
-            //
+            //inspect the resulting state
             let tsc = document.querySelectorAll('#sum-bar > TD');
-
             expect(tsc[3].textContent).toBe('3');
         });
     });
 
-   describe('formula bar', () => {
+    describe('formula bar', () => {
         it('makes changes TO the value of the current cell', () => {
             //set up the inital state
             const model = new TableModel(3, 3);
@@ -135,17 +134,53 @@ describe('table-view', () => {
             const model = new TableModel(numCols, numRows);
             const view = new TableView(model);
             view.init();
+
             // inspect the inital state
             let ths = document.querySelectorAll('THEAD TH');
-            expect(ths.length).toBe(numCols+1);
+            expect(ths.length).toBe(numCols + 1);
+            
+
             // simulted user action
+            
             view.columnButton.click();
+           
             // inspect the resulting state
             ths = document.querySelectorAll('THEAD TH');
-            expect(ths.length).toBe(numCols+2);
+            expect(ths.length).toBe(numCols + 2);
+        });
+
+        it('shifts values over to the right by one when column header is clicked and adds a column', () => {
+           
+            // set up inital state
+            const numCols = 6;
+            const numRows = 10;
+            const model = new TableModel(numCols, numRows);
+            const view = new TableView(model);
+            model.setValue({ col: 2, row: 1 }, '123');
+            view.init();
+         
+            // inspect the inital state
+            let trs = document.querySelectorAll('TBODY TR');
+            let ths = document.querySelectorAll('THEAD TH');
+            expect(ths.length).toBe(numCols + 1);
+            expect(trs[1].cells[3].textContent).toBe('123');
+        
+            // simulted user action
+            ths = document.querySelectorAll('THEAD TH');
+            let th = ths[2];
+            th.click();
+            view.columnButton.click();
+         
+            // inspect the resulting state
+            ths = document.querySelectorAll('THEAD TH');
+            trs = document.querySelectorAll('TBODY TR');
+            expect(ths.length).toBe(numCols + 2);
+            expect(trs[1].cells[4].textContent).toBe('123');
+
+
         });
     });
-    describe('add a column', () => {
+    describe('add a row', () => {
         it('adds a row when addRow button is clicked', () => {
             // set up inital state
             const numCols = 6;
@@ -155,13 +190,39 @@ describe('table-view', () => {
             view.init();
 
             // inspect the inital state
-
+            expect(model.numRows).toBe(numRows);
 
             // simulted user action
             view.rowButton.click();
 
             // inspect the resulting state
             expect(model.numRows).toBe(numRows + 1);
+        });
+
+        it('shifts values down by one when row header is clicked and adds a row', () => {
+           
+             // set up inital state
+            const numCols = 6;
+            const numRows = 10;
+            const model = new TableModel(numCols, numRows);
+            const view = new TableView(model);
+            model.setValue({ col: 2, row: 2 }, '123');
+            view.init();
+
+            // inspect the inital state
+            let trs = document.querySelectorAll('TBODY TR');
+            expect(trs[2].cells[3].textContent).toBe('123');
+
+            // simulted user action
+            let ths = document.querySelectorAll('TBODY TR');
+            let th = ths[2].cells[0];
+            th.click();
+            view.rowButton.click();
+
+            // inspect the resulting state
+            trs = document.querySelectorAll('TBODY TR');
+            expect(model.numRows).toBe(numRows + 1);
+            expect(trs[3].cells[3].textContent).toBe('123');
         });
     });
     describe('table body', () => {
@@ -195,7 +256,7 @@ describe('table-view', () => {
 
             // inspect the inital state
             let ths = document.querySelectorAll('THEAD TH');
-            expect(ths.length).toBe(numCols+1);
+            expect(ths.length).toBe(numCols + 1);
         });
         it('fills in values from the model', () => {
             //set up the inital state

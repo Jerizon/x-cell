@@ -14,9 +14,6 @@ const getLetterRange = function(firstLetter='A', numLetters) {
 			extendedLetterRange.push(String.fromCharCode(aToZRange + 64) + String.fromCharCode(((letter - 64) % 26) + 64));
 	}
 		}
-		
-	/*return getRange(rangeStart, rangeEnd)
-		.map(charCode => String.fromCharCode(charCode));*/
 		return extendedLetterRange;
 }
 module.exports = {
