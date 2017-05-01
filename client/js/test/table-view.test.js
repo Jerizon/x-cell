@@ -83,6 +83,84 @@ describe('table-view', () => {
             let tsc = document.querySelectorAll('#sum-bar > TD');
             expect(tsc[3].textContent).toBe('3');
         });
+
+        it('does not account for non numeric values', () => {
+            //set up the inital state
+            const model = new TableModel(3, 3);
+            const view = new TableView(model)
+            model.setValue({ col: 2, row: 1 }, '1');
+            model.setValue({ col: 2, row: 2 }, 'How is a raven like a writing desk?');
+            view.init();
+
+            //inspect the inital state
+            let trs = document.querySelectorAll('TBODY TR');
+            let td = trs[1].cells[3];
+            let td2 = trs[2].cells[3];
+
+            expect(td.textContent).toBe('1');
+            expect(td2.textContent).toBe('How is a raven like a writing desk?');
+
+            //simulate user action
+            view.renderSumBar();
+
+            //inspect the resulting state
+            let tsc = document.querySelectorAll('#sum-bar > TD');
+            expect(tsc[3].textContent).toBe('1');
+        });
+
+        it('does not display any value for any number of non numeric values', () => {
+            //set up the inital state
+            const model = new TableModel(3, 3);
+            const view = new TableView(model)
+            model.setValue({ col: 2, row: 0 }, 'A robot may not injure a human being or, through inaction, allow a human being to come to harm.');
+            model.setValue({ col: 2, row: 1 }, 'A robot must obey orders given it by human beings except where such orders would conflict with the First Law.');
+            model.setValue({ col: 2, row: 2 }, 'A robot must protect its own existence as long as such protection does not conflict with the First or Second Law.');
+            view.init();
+
+            //inspect the inital state
+            let trs = document.querySelectorAll('TBODY TR');
+            let td = trs[0].cells[3];
+            let td2 = trs[1].cells[3];
+            let td3 = trs[2].cells[3];
+
+            expect(td.textContent).toBe('A robot may not injure a human being or, through inaction, allow a human being to come to harm.');
+            expect(td2.textContent).toBe('A robot must obey orders given it by human beings except where such orders would conflict with the First Law.');
+            expect(td3.textContent).toBe('A robot must protect its own existence as long as such protection does not conflict with the First or Second Law.');
+
+            //simulate user action
+            view.renderSumBar();
+
+            //inspect the resulting state
+            let tsc = document.querySelectorAll('#sum-bar > TD');
+            expect(tsc[3].textContent).toBe('');
+        });
+
+        it('adds values even if there is a non numeric value between them', () => {
+            //set up the inital state
+            const model = new TableModel(3, 3);
+            const view = new TableView(model)
+            model.setValue({ col: 2, row: 0 }, '1851'); 
+            model.setValue({ col: 2, row: 1 }, 'Call me Ishmeal');
+            model.setValue({ col: 2, row: 2 }, '3');
+            view.init();
+
+            //inspect the inital state
+            let trs = document.querySelectorAll('TBODY TR');
+            let td = trs[0].cells[3];
+            let td2 = trs[1].cells[3];
+            let td3 = trs[2].cells[3];
+
+            expect(td.textContent).toBe('1851');
+            expect(td2.textContent).toBe('Call me Ishmeal');
+            expect(td3.textContent).toBe('3');
+
+            //simulate user action
+            view.renderSumBar();
+
+            //inspect the resulting state
+            let tsc = document.querySelectorAll('#sum-bar > TD');
+            expect(tsc[3].textContent).toBe('1854');
+        });
     });
 
     describe('formula bar', () => {
@@ -138,18 +216,18 @@ describe('table-view', () => {
             // inspect the inital state
             let ths = document.querySelectorAll('THEAD TH');
             expect(ths.length).toBe(numCols + 1);
-            
+
 
             // simulted user action
             view.columnButton.click();
-           
+
             // inspect the resulting state
             ths = document.querySelectorAll('THEAD TH');
             expect(ths.length).toBe(numCols + 2);
         });
 
         it('shifts values over to the right by one when column header is clicked and adds a column', () => {
-           
+
             // set up inital state
             const numCols = 6;
             const numRows = 10;
@@ -157,19 +235,19 @@ describe('table-view', () => {
             const view = new TableView(model);
             model.setValue({ col: 2, row: 1 }, '123');
             view.init();
-         
+
             // inspect the inital state
             let trs = document.querySelectorAll('TBODY TR');
             let ths = document.querySelectorAll('THEAD TH');
             expect(ths.length).toBe(numCols + 1);
             expect(trs[1].cells[3].textContent).toBe('123');
-        
+
             // simulted user action
             ths = document.querySelectorAll('THEAD TH');
             let th = ths[2];
             th.click();
             view.columnButton.click();
-         
+
             // inspect the resulting state
             ths = document.querySelectorAll('THEAD TH');
             trs = document.querySelectorAll('TBODY TR');
@@ -199,8 +277,8 @@ describe('table-view', () => {
         });
 
         it('shifts values down by one when row header is clicked and adds a row', () => {
-           
-             // set up inital state
+
+            // set up inital state
             const numCols = 6;
             const numRows = 10;
             const model = new TableModel(numCols, numRows);

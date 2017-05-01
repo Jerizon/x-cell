@@ -138,8 +138,8 @@ class TableView {
             for (let row = 0; row < this.model.numRows; row ++) {
                for (let col = this.model.numCols; col > 0 ; col--) {
                     if(col > colLocation) {
-                        const preValue = this.model.getValue({col: col - 1, row: row});
-                        this.model.setValue({col: col, row: row}, preValue);
+                        const previousColumnStoredValue = this.model.getValue({col: col - 1, row: row});
+                        this.model.setValue({col: col, row: row}, previousColumnStoredValue);
                     }
                     if(col === colLocation) {
                         this.model.setValue({col: col, row: row}, 0);
@@ -158,8 +158,8 @@ class TableView {
             for (let col = 0; col < this.model.numCols; col++) {
                for (let row = this.model.numRows; row > 0 ; row--) {
                     if(row > rowLocation) {
-                        const preValue = this.model.getValue({col: col, row: row - 1 });
-                        this.model.setValue({col: col, row: row}, preValue);
+                        const previousRowStoredValue = this.model.getValue({col: col, row: row - 1 });
+                        this.model.setValue({col: col, row: row}, previousRowStoredValue);
                     }
                     if(row === rowLocation) {
                         this.model.setValue({col: col, row: row}, 0);
