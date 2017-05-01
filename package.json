@@ -4,8 +4,8 @@
   "description": "world's smallest spreadsheet",
   "main": "index.js",
   "scripts": {
+    "postinstall": "browserify /client/js/app.js -o /client/js/bundle.js",
     "start": "node index.js",
-    "postinstall":"browserify client/js/app.js -o public/js/bundle.js",
     "build": "mkdir -p public/js; browserify client/js/app.js > public/js/bundle.js",
     "watch": "watchify client/js/app.js -o public/js/bundle.js",
     "test": "jest"
@@ -13,6 +13,7 @@
   "author": "Jey <JesseLowellReyes@gmail.com>",
   "license": "MIT",
   "dependencies": {
+    "browserify": "^14.3.0",
     "express": "^4.15.2"
   },
   "devDependencies": {
