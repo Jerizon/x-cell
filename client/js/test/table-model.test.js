@@ -14,5 +14,5 @@ describe('table-model', () => {
 
 		//inspect the resulting state
 		expect(model.getValue(location)).toBe('foo');
-	})
-})
+	});
+});

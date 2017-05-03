@@ -1,6 +1,6 @@
 const { getLetterRange } = require('./array-util');
 const { removeChildren, createTH, createTR, createTD } = require('./dom-util');
-
+ 
 class TableView {
     constructor(model) {
         this.model = model;

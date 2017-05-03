@@ -364,4 +364,4 @@ describe('table-view', () => {
             expect(labelTexts).toEqual([' ', 'A', 'B', 'C', 'D', 'E', 'F']);
         });
     });
-});
+});  

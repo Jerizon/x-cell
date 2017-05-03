@@ -1,4 +1,4 @@
-{
+ {
   "name": "x-cell",
   "version": "1.0.0",
   "description": "world's smallest spreadsheet",
@@ -22,3 +22,4 @@
     "watchify": "^3.9.0"
   }
 }
+ 

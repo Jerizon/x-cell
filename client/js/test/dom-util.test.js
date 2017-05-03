@@ -1,4 +1,4 @@
-const {
+const { 
     removeChildren,
     createTH,
     createTR,
@@ -49,4 +49,4 @@ describe('dom-util', () => {
             })
         });
     });
-});
+}); 

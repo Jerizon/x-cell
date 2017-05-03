@@ -26,3 +26,4 @@ class TableModel {
 }
 
 module.exports = TableModel;
+  

@@ -28,4 +28,4 @@ module.exports = {
 	createTH: createTH,
 	createTD: createTD,
 	removeChildren: removeChildren
-}
+}  
