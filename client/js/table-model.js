@@ -23,7 +23,7 @@ class TableModel {
     setValue(location, value) {
         this.data[this._getCellId(location)] = value;
     }
-}
+} 
 
 module.exports = TableModel;
   
